@@ -15,7 +15,7 @@ import (
 
 /*
 	{"order_id":"1","investor_id":"john","asset_id":"B3SA3","current_shares":10,"shares":5,"price":12,"order_type":"SELL"}
-	{"investor_id":"Ana","asset_id":"B3SA3","current_shares":10,"shares":0,"price":10,"order_type":"BUY"}
+	{"investor_id":"Ana","asset_id":"B3SA3","current_shares":10,"shares":0,"price":12,"order_type":"BUY"}
 */
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 
 	kafkaMsgChan := make(chan *ckafka.Message)
 	configMap := &ckafka.ConfigMap{
-		"bootstrap.servers": "kubernetes.docker.internal:9094",
+		"bootstrap.servers": "host.docker.internal:9094",
 		"group.id":          "myGroup",
 		"auto.offset.reset": "latest",
 	}
@@ -50,7 +50,7 @@ func main() {
 			if err != nil {
 				panic(err)
 			}
-			order := transformer.TransformerInput(tradeInput)
+			order := transformer.TransformInput(tradeInput)
 			ordersIn <- order
 		}
 	}()
