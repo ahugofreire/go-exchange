@@ -4,9 +4,11 @@ services:
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-
+    networks:
+      - network1
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: kafka
     depends_on:
       - zookeeper
     ports:
@@ -20,8 +22,8 @@ services:
       KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
-    extra_hosts:
-      - "host.docker.internal:192.168.15.3"
+    networks:
+      - network1
        
   control-center:
     image: confluentinc/cp-enterprise-control-center:latest
@@ -34,3 +36,19 @@ services:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       PORT: 9021
+    networks:
+      - network1
+  go-exchange:
+    build: .
+    container_name: go-exchange
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    #command: "go run cmd/trade/main.go"
+    networks:
+      - network1 
+networks:
+  network1:
+    name: trade-connect-api_internal-app-network
+    external: true

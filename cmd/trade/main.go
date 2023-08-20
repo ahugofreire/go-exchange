@@ -26,8 +26,8 @@ func main() {
 
 	kafkaMsgChan := make(chan *ckafka.Message)
 	configMap := &ckafka.ConfigMap{
-		"bootstrap.servers": "host.docker.internal:9094",
-		"group.id":          "myGroup",
+		"bootstrap.servers": "kafka:9092",
+		"group.id":          "orders-consumer-id",
 		"auto.offset.reset": "latest",
 	}
 
